@@ -13,11 +13,14 @@ function login(role='student'){
   e.preventDefault(); const btn=document.getElementById('submit'), input=document.getElementById('secret'); btn.disabled=true; message('');
   try{
    const password=input.value;input.value='';
-   const result=await query(db.auth.signInWithPassword({email:teacher?cfg.teacherEmail:cfg.studentEmail,password}));
+   const response=await fetch(cfg.url+'/functions/v1/portal-login',{method:'POST',headers:{'Content-Type':'application/json','apikey':cfg.key},body:JSON.stringify({role,password})});
+   if(!response.ok){const err=new Error('Sign-in failed');err.throttled=response.status===429;throw err}
+   const tokens=await response.json();
+   const result=await query(db.auth.setSession({access_token:tokens.access_token,refresh_token:tokens.refresh_token}));
    const p=await query(db.from('profiles').select('id,name,role').eq('id',result.user.id).single());
    if(p.role!==role)throw new Error('Incorrect portal role');
    await dashboard(p);
-  }catch(err){await db.auth.signOut();login(role);message('Unable to sign in. Check your secret words or ask your teacher to finish account setup.')}
+  }catch(err){await db.auth.signOut();login(role);message(err.throttled?'Too many attempts. Please wait five minutes.':'Unable to sign in. Check your secret words or ask your teacher to finish account setup.')}
   finally{btn.disabled=false}
  };
 }
