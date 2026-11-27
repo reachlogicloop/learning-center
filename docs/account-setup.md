@@ -5,4 +5,4 @@ The Supabase portal-login Edge Function resolves the one profile per role on the
 
 The database throttles login requests to eight per role in a five-minute window. This initial shared per-role limit can temporarily block legitimate sign-ins; review before expanding. Multiple students require a redesigned account lookup and rate limiting.
 
-The 15 lessons are registered in the database but the approved lesson files have not yet been imported. Student dashboard deliberately does not expose broken lesson links. Browser/authentication tests, content licensing, and deployment are pending. Publishing through GitHub Pages does not automatically make the site private.
+All 15 lessons are registered in the database. Unit 1 and the shared learning engine are imported. Other lesson files are pending. The student dashboard deliberately does not expose broken links. Progress is saved asynchronously and is not tamper-proof; avoid concurrent lesson tabs. Browser/authentication tests, content licensing, and deployment are pending. Publishing through GitHub Pages does not automatically make the site private.

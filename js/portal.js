@@ -45,7 +45,7 @@ async function dashboard(p){
   for(const u of list){
    const row=document.createElement('div');row.className='row';const title=document.createElement('strong');title.textContent=u.title;row.append(title);
    if(teacher){for(const s of students){const label=document.createElement('label'), check=document.createElement('input');check.type='checkbox';check.checked=assignments.some(a=>a.student_id===s.id&&a.unit_id===u.id);label.append(check,document.createTextNode(' '+s.name));row.append(label);check.onchange=async()=>{const checked=check.checked;check.disabled=true;try{if(checked)await query(db.from('assignments').insert({student_id:s.id,unit_id:u.id}));else await query(db.from('assignments').delete().eq('student_id',s.id).eq('unit_id',u.id));await dashboard(p)}catch(err){check.checked=!checked;check.disabled=false;message('Unable to update assignment.')}};const detail=document.createElement('small');detail.textContent=stats(progress.find(x=>x.student_id===s.id&&x.unit_id===u.id));row.append(detail)}}
-   else {const detail=document.createElement('small');detail.textContent=stats(progress.find(x=>x.student_id===p.id&&x.unit_id===u.id))+' · Lesson files pending upload';row.append(detail)}
+   else {const detail=document.createElement('small');detail.textContent=stats(progress.find(x=>x.student_id===p.id&&x.unit_id===u.id))+(u.id==='safety-01'?'':' · Lesson files pending upload');row.append(detail);if(u.id==='safety-01'){const link=document.createElement('a');link.href='lessons/reading/safety/unit01.html';link.textContent='Open lesson';row.append(link)}}
    box.append(row);
   }
   if(!list.length)box.append('No lessons yet.');target.append(box);
